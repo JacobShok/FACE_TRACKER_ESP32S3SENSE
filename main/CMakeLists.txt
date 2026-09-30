@@ -18,4 +18,4 @@ idf_component_register(SRCS "face_detect.cpp" "cam.c" "camera_module.c"
                        PRIV_REQUIRES esp_driver_ledc mbedtls esp_driver_mcpwm
                        )
 
-target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-error=missing-field-initializers -Wno-error=maybe-uninitialized)
+target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-error=missing-field-initializers -Wno-error=maybe-uninitialized -Wno-error=uninitialized)
