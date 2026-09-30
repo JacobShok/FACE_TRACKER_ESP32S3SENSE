@@ -34,8 +34,9 @@ esp_err_t camera_module_init(const camera_config_params_t *params)
     camera_config_t config = {
         .pin_pwdn = CAM_PIN_PWDN,
         .pin_reset = CAM_PIN_RESET,
-        .pin_xclk = -1,   // XCLK is driven externally via our own LEDC channel (cam.c) — keep the
-                          // driver from claiming/reassigning this pin via its native S3 clock output
+        .pin_xclk = CAM_PIN_XCLK,   // TEST: let the native S3 clock generator drive XCLK again
+                                    // (was forced to -1 for the OV2640's slow-clock-startup issue;
+                                    // testing whether the OV3660 actually needs that workaround)
         .pin_sccb_sda = CAM_PIN_SIOD,
         .pin_sccb_scl = CAM_PIN_SIOC,
 
@@ -51,7 +52,7 @@ esp_err_t camera_module_init(const camera_config_params_t *params)
         .pin_href = CAM_PIN_HREF,
         .pin_pclk = CAM_PIN_PCLK,
 
-        .xclk_freq_hz = 20000000,
+        .xclk_freq_hz = 10000000,
         .ledc_timer = LEDC_TIMER_0,
         .ledc_channel = LEDC_CHANNEL_0,
 
@@ -191,6 +192,42 @@ esp_err_t camera_module_set_saturation(int saturation)
     }
 
     if (sensor->set_saturation(sensor, saturation) != 0) {
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}
+
+esp_err_t camera_module_set_whitebal(int enable)
+{
+    if (!camera_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    sensor_t *sensor = esp_camera_sensor_get();
+    if (!sensor) {
+        return ESP_FAIL;
+    }
+
+    if (sensor->set_whitebal(sensor, enable) != 0) {
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}
+
+esp_err_t camera_module_set_wb_mode(int mode)
+{
+    if (!camera_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    sensor_t *sensor = esp_camera_sensor_get();
+    if (!sensor) {
+        return ESP_FAIL;
+    }
+
+    if (sensor->set_wb_mode(sensor, mode) != 0) {
         return ESP_FAIL;
     }
 

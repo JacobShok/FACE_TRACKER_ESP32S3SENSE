@@ -1,6 +1,9 @@
 #include <stdio.h>
 
+#define SILENCE_EI_CLASSFIER_OBJECT_DETECTION_COUNT_WARNING
+
 #include "edge-impulse-sdk/classifier/ei_run_classifier.h"
+#include "model-parameters/model_metadata.h"
 
 // EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE
 
@@ -59,8 +62,8 @@ extern "C" int run_face_detection(uint16_t *cur_frame, size_t cur_frame_size) {
 
     // Print the prediction results (object detection)
     #if EI_CLASSIFIER_OBJECT_DETECTION == 1
-        printf("Object detection bounding boxes:\r\n");
-        for (uint32_t i = 0; i < EI_CLASSIFIER_OBJECT_DETECTION_COUNT; i++) {
+        printf("Object detection bounding boxes: (count=%lu)\r\n", (unsigned long)result.bounding_boxes_count);
+        for (uint32_t i = 0; i < result.bounding_boxes_count; i++) {
             ei_impulse_result_bounding_box_t bb = result.bounding_boxes[i];
             if (bb.value == 0) {
                 continue;

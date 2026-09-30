@@ -30,6 +30,10 @@ esp_err_t camera_module_set_contrast(int contrast);
 
 esp_err_t camera_module_set_saturation(int saturation);
 
+esp_err_t camera_module_set_whitebal(int enable);
+
+esp_err_t camera_module_set_wb_mode(int mode);
+
 #ifdef __cplusplus
 }
 #endif
